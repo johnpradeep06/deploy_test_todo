@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:8000/api/tasks/';
+
 function App() {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/tasks/')
+    fetch(API_BASE)
       .then(res => res.json())
       .then(data => setTasks(data));
   }, []);
@@ -14,7 +16,7 @@ function App() {
   const addTask = (e) => {
     e.preventDefault();
     if (!newTask.trim()) return;
-    fetch('http://localhost:8000/api/tasks/', {
+    fetch(API_BASE, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ title: newTask, completed: false })
@@ -25,7 +27,7 @@ function App() {
   };
 
   const toggleComplete = (task) => {
-    fetch(`http://localhost:8000/api/tasks/${task.id}/`, {
+    fetch(`${API_BASE}${task.id}/`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...task, completed: !task.completed })
@@ -35,7 +37,7 @@ function App() {
   };
 
   const deleteTask = (id) => {
-    fetch(`http://localhost:8000/api/tasks/${id}/`, { method: 'DELETE' })
+    fetch(`${API_BASE}${id}/`, { method: 'DELETE' })
       .then(() => setTasks(tasks.filter(t => t.id !== id)));
   };
 
